@@ -4,7 +4,7 @@ const connection = require('../database/connection.js');
 module.exports = {
     async index(request, response) {
         const { page = 1} = request.query;
-        const [count] = await connection('incidents').count();
+        const [count] = await connection('incidents').join('ongs', 'ong_id', '=', 'incidents.ong_id').count();
         console.log(count);
         const ongs = await connection('incidents')
         .join('ongs', 'ong_id', '=', 'incidents.ong_id')
@@ -17,6 +17,7 @@ module.exports = {
             'ongs.city', 
             'ongs.uf']);
         response.header('X-Total-Count', count['count(*)']);
+        console.log(ongs);
         return response.json(ongs);
     },
     async delete(request, response) {
